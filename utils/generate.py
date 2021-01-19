@@ -1,8 +1,8 @@
 # generate.py
 
 from settings import config
-from utils.loader import load, get_path_names
-from utils.transforms import force_unique
+from .loader import load, get_path_names
+from .transforms import force_unique
 
 from functools import partial
 import os

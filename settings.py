@@ -1,6 +1,6 @@
 # settings.py
 
-from mappings import colmap
+from assets.mappings import colmap
 import os
 
 class Config():

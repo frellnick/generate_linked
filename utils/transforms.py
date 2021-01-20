@@ -11,6 +11,7 @@ import numpy as np
 from utils.generators import gen_registry
 
 
+
 def draw_unique(data, fieldname):
     """
     Iterate over field with generator until all values in set are unique.
@@ -41,7 +42,6 @@ def draw_unique(data, fieldname):
         generator = gen_registry[fieldname]
         _redraw_duplicates(data, fieldname, generator)
         draw_unique(data, fieldname)
-
 
 
 def force_unique(data, fieldnames):

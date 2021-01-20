@@ -1,13 +1,12 @@
 # test_config.py
 
-
+from settings import get_config
 import pytest 
 
 
 @pytest.fixture 
 def cfg():
-    from settings import config 
-    return config
+    return get_config()
 
 
 def test_config(cfg):

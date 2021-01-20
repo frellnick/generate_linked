@@ -2,6 +2,8 @@
 
 from assets.mappings import colmap
 import os
+from utils.g import g
+
 
 class Config():
     def __init__(self):
@@ -10,9 +12,9 @@ class Config():
 
         self.SOURCE_DIR = _mpath('data/source_samples')
 
-        self.ID_PATH = _mpath('data/idpool/id_pool_modified.csv')
+        self.ID_FILE_PATH = _mpath('data/idpool/id_pool.csv')
 
-        self.ID_DIR = _mpath('data/idpool')
+        self.ID_FILE_SAVE_PATH = _mpath('data/idpool/id_pool_modified.csv')
     
         self.LINKED_DIR = _mpath('data/linked_tables')
         
@@ -35,4 +37,10 @@ def _mpath(path):
     return os.path.join(os.getcwd(), *cp)
 
 
-config = Config()
+def get_config():
+    if hasattr(g, 'config'):
+        config = g.config
+    else:
+        config = Config()
+        
+    return config

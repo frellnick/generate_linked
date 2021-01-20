@@ -6,11 +6,13 @@ from utils.g import g
 
 
 class Config():
-    def __init__(self):
+    def __init__(self, debug=True):
         super().__init__()
         self.MAPPINGS = colmap
 
         self.SOURCE_DIR = _mpath('data/source_samples')
+
+        self.SAVE_POOL = True
 
         self.ID_FILE_PATH = _mpath('data/idpool/id_pool.csv')
 
@@ -31,16 +33,22 @@ class Config():
             # 'last_name',
         ]
 
+        # Set total size of identity pool to be created or sampled
+        self.ID_POOL_SIZE = 100000
+
+        # Set proportion of identities in identity pool to be used in linkage
+        self.ID_POOL_MAX_UTILIZATION = 1
+
 
 def _mpath(path):
     cp = path.split('/')
     return os.path.join(os.getcwd(), *cp)
 
 
-def get_config():
+def get_config(debug=True) -> Config:
     if hasattr(g, 'config'):
         config = g.config
     else:
-        config = Config()
+        config = Config(debug=debug)
         
     return config

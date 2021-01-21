@@ -36,3 +36,11 @@ def test_dataset_view_raw(source, transforms):
         transforms=transforms
     )
     assert len(d.raw) > 0
+
+
+def test_dataset_apply(source, transforms):
+    d = Dataset(
+        source=source,
+        transforms=transforms
+    )
+    assert d.apply(transforms[0]) is not None

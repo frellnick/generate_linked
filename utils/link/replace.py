@@ -5,12 +5,18 @@ Instantiate datsets, idpool, and replace identifying information with idpool.
 """
 
 from .dataset import Dataset
+
 from utils.transforms import stage_partial, sample_frame, rename_col
 from settings import get_config, g
+from assets.mappings import colmap
+from .linkage import Linkage
+
+import os
 
 config = get_config()
 
-def get_id_pool() -> Dataset:
+
+def load_id_pool() -> Dataset:
     num_ids = int(config.ID_POOL_MAX_UTILIZATION * config.ID_POOL_SIZE)
     idpool = Dataset(
         source=config.ID_FILE_SAVE_PATH,
@@ -20,3 +26,25 @@ def get_id_pool() -> Dataset:
         ]
     )
     return idpool
+
+
+def _list_files(s=None):
+    if s is None:
+        s = config.SOURCE_DIR
+    return [os.path.join(s, filename) for filename in os.listdir(s)]
+    
+
+def load_source_samples():
+    t = [
+        sample_frame,
+    ]
+    files = [Dataset(s, t) for s in _list_files()]
+    return files
+
+
+def create_linkage():
+    l = Linkage(
+        files=load_source_samples(),
+        idpool=load_id_pool()
+    )
+    return l

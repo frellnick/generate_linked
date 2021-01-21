@@ -43,3 +43,10 @@ class Dataset():
             df = t(df)
         self._transformed = df.copy()
         return df
+
+
+    def apply(self, fn, *args, **kwargs):
+        if not self._computed:
+            self.compute()
+        
+        return fn(self._transformed, *args, **kwargs)

@@ -1,8 +1,8 @@
-# transforms.py
+# draw_unique.py
 
 """
-ID Transforms
-    General modifications like insuring validity, uniqueness, error introduction.
+Draw Unique Data
+    Ensure column uniqueness.  Run generators to build unique data.
 """
 
 import pandas as pd
@@ -15,10 +15,15 @@ from settings import get_config
 
 config = get_config()
 
-def draw_unique(data, fieldname):
+
+
+def draw_unique(data, fieldname=None):
     """
     Iterate over field with generator until all values in set are unique.
     """
+    if fieldname is None:
+        fieldname = data.columns[0]
+
     def _test_unique(f:pd.Series):
         return f.nunique() == len(f)
     
@@ -39,12 +44,12 @@ def draw_unique(data, fieldname):
 
     
     field = data[fieldname]
-    if _test_unique(field):
-        return data
-    else:
+    if not _test_unique(field):
         generator = gen_registry[fieldname]
         _redraw_duplicates(data, fieldname, generator)
         draw_unique(data, fieldname)
+    
+    return data
 
 
 
@@ -55,16 +60,20 @@ def _data_contains_fieldnames(data: pd.DataFrame, fieldnames: list) -> bool:
     return True
 
 
-def force_unique(data, fieldnames):
+def _make_jobs(data, fieldnames):
+    return [(data.copy(), field) for field in fieldnames]
+
+
+def force_unique(data:pd.DataFrame, fieldnames:list):
+    
     print('fieldnames: ', fieldnames)
     assert _data_contains_fieldnames(data, fieldnames)
-    jobs = []
-    print('CONFIG: ', config.MULTIPROCESSING)
+
     if config.MULTIPROCESSING:
-        raise NotImplementedError
+        jobs = _make_jobs(data, fieldnames)
 
     for fieldname in fieldnames:
-        jobs.append((data, fieldname))
         print('Drawing unique column: ', fieldname)
-        draw_unique(data, fieldname)
+        unique_frame = draw_unique(data[fieldname].to_frame(name=fieldname).copy())
+        data[fieldname] = unique_frame[fieldname]
     return data

@@ -22,3 +22,4 @@ if __name__ == "__main__":
     g.mpool = mp.Pool(config.NUM_WORKERS)
     
     idpool = create_id_pool()
+    print(idpool.head())

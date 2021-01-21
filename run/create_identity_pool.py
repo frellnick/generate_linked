@@ -33,10 +33,10 @@ def _get_transforms()->list:
     return transforms
 
 
-def _transform_save_pool(pool:pd.DataFrame, save=False, save_dir=None)->pd.DataFrame:
+def _transform_save_pool(pool:pd.DataFrame, save=False, save_path=None)->pd.DataFrame:
     tpool =_transform_pool(pool, _get_transforms())
     if save:
-        tpool.to_csv(os.path.join(save_dir, 'test_idpool_modified.csv'), index=False)
+        tpool.to_csv(save_path, index=False)
     return tpool
 
 
@@ -50,4 +50,6 @@ def create_id_pool(config=config) -> pd.DataFrame:
         pool = _expand_pool(raw_pool, config.ID_POOL_SIZE)
     else:
         pool = raw_pool.sample(n=config.ID_POOL_SIZE)
-    return _transform_save_pool(pool, save=config.SAVE_POOL, save_dir=config.ID_FILE_SAVE_PATH)
+    return _transform_save_pool(
+        pool, save=config.SAVE_POOL, 
+        save_path=config.ID_FILE_SAVE_PATH)

@@ -1,1 +1,3 @@
-from .g import g
+from .g import G
+
+g = G()

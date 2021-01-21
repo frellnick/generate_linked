@@ -10,7 +10,10 @@ import numpy as np
 
 from utils.generators import gen_registry
 
+from utils import g
+from settings import get_config 
 
+config = get_config()
 
 def draw_unique(data, fieldname):
     """
@@ -55,7 +58,13 @@ def _data_contains_fieldnames(data: pd.DataFrame, fieldnames: list) -> bool:
 def force_unique(data, fieldnames):
     print('fieldnames: ', fieldnames)
     assert _data_contains_fieldnames(data, fieldnames)
+    jobs = []
+    print('CONFIG: ', config.MULTIPROCESSING)
+    if config.MULTIPROCESSING:
+        raise NotImplementedError
+
     for fieldname in fieldnames:
+        jobs.append((data, fieldname))
         print('Drawing unique column: ', fieldname)
         draw_unique(data, fieldname)
     return data

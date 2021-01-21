@@ -2,7 +2,7 @@
 
 from assets.mappings import colmap
 import os
-from utils.g import g
+from utils import g
 
 
 class Config():
@@ -34,10 +34,16 @@ class Config():
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 100000
+        self.ID_POOL_SIZE = 1000
 
         # Set proportion of identities in identity pool to be used in linkage
         self.ID_POOL_MAX_UTILIZATION = 1
+
+        # Control native multiprocessing. Must be False if not ran from __main__ 
+        self.MULTIPROCESSING = False
+
+        self.NUM_WORKERS = 4
+
 
 
 def _mpath(path):
@@ -46,9 +52,7 @@ def _mpath(path):
 
 
 def get_config(debug=True) -> Config:
-    if hasattr(g, 'config'):
-        config = g.config
-    else:
-        config = Config(debug=debug)
+    if not hasattr(g, 'config'):
+        g.config = Config(debug=debug)
         
-    return config
+    return g.config

@@ -16,7 +16,7 @@ conda create -n synthgen python=3.8
 conda activate synthgen
 conda install pytest
 conda install faker
-conda install modin[dask]
+# conda install modin[dask] ## Requires network firwall rules for DASK scheduler
 # conda env create -f environment.yml
 # conda activate synthgen
 ```

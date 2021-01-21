@@ -8,6 +8,7 @@ from utils import g
 class Config():
     def __init__(self, debug=True):
         super().__init__()
+
         self.MAPPINGS = colmap
 
         self.SOURCE_DIR = _mpath('data/source_samples')
@@ -34,10 +35,14 @@ class Config():
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 200000
+        self.ID_POOL_SIZE = 20000
 
         # Set proportion of identities in identity pool to be used in linkage
-        self.ID_POOL_MAX_UTILIZATION = 1
+        self.ID_POOL_MAX_UTILIZATION = 1.0
+
+        # Dataset Size
+        self.DATASET_SIZE = 1000
+
 
         # Control native multiprocessing. Must be False if not ran from __main__ 
         self.MULTIPROCESSING = False

@@ -1,12 +1,11 @@
 # create_identity_pool.py
 
-import argparse
-from settings import get_config
-from utils.loader import load, get_path_names
-from utils.transforms import force_unique
+from pandas.core import frame
+from settings import get_config, g
+from utils.loader import load
+from utils.transforms import force_unique, expand_frame
 
 from functools import partial
-import os
 import pandas as pd
 import numpy as np
 
@@ -42,15 +41,7 @@ def _transform_save_pool(pool:pd.DataFrame, save=False, save_path=None)->pd.Data
 
 
 def _expand_pool(pool:pd.DataFrame, pool_size:int)->pd.DataFrame:
-    def _copy_with_permuation(pool:pd.DataFrame, pool_size:int)->pd.DataFrame:
-        print(f'Oversampling pool of size {len(pool)} to {pool_size}')
-        p = pool.sample(n=pool_size, replace=True)\
-            .reset_index(drop=True)
-        for col in np.random.choice(p.columns, size=np.random.randint(1, len(p.columns)), replace=False):
-            print(f'Permuting ID Pool Column: ', col)
-            p[col] = np.random.permutation(p[col])
-        return p 
-    return _copy_with_permuation(pool, pool_size)
+    return expand_frame(frame=pool, frame_size=pool_size)
 
 
 def create_id_pool(config=config) -> pd.DataFrame:

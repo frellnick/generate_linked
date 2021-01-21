@@ -71,8 +71,8 @@ def force_unique(data:pd.DataFrame, fieldnames:list):
     if config.MULTIPROCESSING:
         print('Starting processes for draw unique.')
         jobs = _make_jobs(data, fieldnames)
-        g.mpool.map(draw_unique, jobs)
-        for frame in jobs:
+        uf = list(g.mpool.map(draw_unique, jobs))
+        for frame in uf:
             col = frame.columns[0]
             data[col] = frame[col]
     else:

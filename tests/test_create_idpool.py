@@ -31,4 +31,3 @@ def test_create_save_small_pool(testconfig):
     pool = create_id_pool(config=testconfig)
     assert len(pool) == testconfig.ID_POOL_SIZE 
     assert os.path.isfile(testconfig.ID_FILE_SAVE_PATH) == True
-    os

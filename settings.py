@@ -34,7 +34,7 @@ class Config():
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 100000
+        self.ID_POOL_SIZE = 200000
 
         # Set proportion of identities in identity pool to be used in linkage
         self.ID_POOL_MAX_UTILIZATION = 1

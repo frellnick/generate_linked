@@ -10,8 +10,7 @@ import numpy as np
 
 from utils.generators import gen_registry
 
-from utils import g
-from settings import get_config 
+from settings import get_config, g
 
 config = get_config()
 
@@ -61,7 +60,7 @@ def _data_contains_fieldnames(data: pd.DataFrame, fieldnames: list) -> bool:
 
 
 def _make_jobs(data, fieldnames):
-    return [(data.copy(), field) for field in fieldnames]
+    return [data[fieldname].to_frame(name=fieldname).copy() for fieldname in fieldnames]
 
 
 def force_unique(data:pd.DataFrame, fieldnames:list):
@@ -70,10 +69,17 @@ def force_unique(data:pd.DataFrame, fieldnames:list):
     assert _data_contains_fieldnames(data, fieldnames)
 
     if config.MULTIPROCESSING:
+        print('Starting processes for draw unique.')
         jobs = _make_jobs(data, fieldnames)
-
-    for fieldname in fieldnames:
-        print('Drawing unique column: ', fieldname)
-        unique_frame = draw_unique(data[fieldname].to_frame(name=fieldname).copy())
-        data[fieldname] = unique_frame[fieldname]
+        g.mpool.map(draw_unique, jobs)
+        for frame in jobs:
+            col = frame.columns[0]
+            data[col] = frame[col]
+    else:
+        print('Running single threaded draw unique.')
+        for fieldname in fieldnames:
+            print('Drawing unique column: ', fieldname)
+            unique_frame = draw_unique(data[fieldname].to_frame(name=fieldname).copy())
+            data[fieldname] = unique_frame[fieldname]
+    
     return data

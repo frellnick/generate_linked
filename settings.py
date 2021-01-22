@@ -43,6 +43,8 @@ class Config():
         # Dataset Size
         self.DATASET_SIZE = 1000
 
+        # Link Assignment ('random assignment' (1:1) or 'random_with_repeats')
+        self.ASSIGNMENT_TYPE = 'random_assignment'
 
         # Control native multiprocessing. Must be False if not ran from __main__ 
         self.MULTIPROCESSING = False

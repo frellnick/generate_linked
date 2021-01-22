@@ -4,7 +4,7 @@
 import argparse
 import multiprocessing as mp
 
-from run.create_identity_pool import create_id_pool
+from run import create_id_pool, link_sources, export_linkage
 from settings import g, get_config
 
 import time
@@ -12,8 +12,13 @@ import time
 
 config = get_config()
 
-def run(*args, **kwargs):
-    pass
+def time_step(fn, fname, *args, **kwargs):
+    s = time.time()
+    print(f"Starting {fname}")
+    out = fn(*args, **kwargs)
+    print(f"Completed {fname} in {time.time() - s}.")
+    return out
+
 
 
 if __name__ == "__main__":
@@ -25,7 +30,11 @@ if __name__ == "__main__":
     config.MULTIPROCESSING = True
     g.mpool = mp.Pool(config.NUM_WORKERS)
     
-    idpool = create_id_pool()
-    print(idpool.head())
+    # Create an ID Pool - Will save modified to disk
+    idpool = time_step(create_id_pool, 'create_id_pool')
 
-    print(f'Created idpool of len {len(idpool)} in {time.time() - start}')
+    # Create default linkage
+    linkage = time_step(link_sources, 'link_sources')
+
+    # Export linkage with default paramaters
+    export_linkage(linkage=linkage)

@@ -9,6 +9,14 @@ from .dataset import Dataset
 import pandas as pd
 import numpy as np
 
+
+from assets.mappings import colmap
+from settings import get_config
+import warnings
+
+config = get_config()
+
+
 class Linkage():
     """
     Linkage
@@ -21,35 +29,88 @@ class Linkage():
     def __init__(self, files:list, idpool:Dataset):
         self.files = files 
         self.idpool = idpool
+        self._assigned = False
 
 
     def __repr__(self):
         return '<Linkage Object>'
 
-
-    def _map_replace(self):
-        pass
-
-    def _assign_linkage(self, assignment='random'):
+    def _assign_linkage(self, assignment=None):
+        if assignment is None:
+            assignment = config.ASSIGNMENT_TYPE
         assign = _load_assignment_fn(assignment)
+        id_list = self.idpool.compute()['id_pool'].unique()
         for f in self.files:
-            f.linked = f.apply(assign, max_id=len(self.idpool))
+            f.linked = f.apply(assign, id_list=id_list)
+        self._assigned = True
 
+    def _replace_linked_values(self):
+        for f in self.files:
+            f.linked = merge_with_pool(f.linked, self.idpool.compute())
+            f.linked = swap_mapped_and_clean(f.linked)
 
+    def process(self):
+        self._assign_linkage()
+        self._replace_linked_values()
 
 
 
 def _load_assignment_fn(assignment):
     assignments = {
-        'random': random_assignment,
+        'random_assignment': random_assignment,
+        'random_with_repeats': random_with_repeats_assignment,
     }
     return assignments[assignment]
 
 
-
+# A 1:1 assignment row to ID.  Not for repead IDs.
 def random_assignment(data: pd.DataFrame, *args, **kwargs):
-    assert kwargs['max_id'] > 0, 'Must pass max_id > 0 for random assignment'
-    id_assignments = np.random.choice(
-        np.arange(kwargs['max_id']), size=len(data), replace=False)
+    if 'max_id' in kwargs:
+        id_assignments = np.random.choice(
+            np.arange(kwargs['max_id']), size=len(data), replace=False)
+    elif 'id_list' in kwargs:
+        id_assignments = np.random.choice(
+            kwargs['id_list'], size=len(data), replace=False)
+    else:
+        raise KeyError("'max_id' or 'id_list' must be provided.")
+
     data['id'] = id_assignments
     return data
+
+
+# Random assignment allows for repeats.
+def _search_keys(seta, setb):
+    return [a for a in seta if a in setb]
+
+def random_with_repeats_assignment(data: pd.DataFrame, *args, **kwargs):
+    if 'colmap' not in kwargs:
+        warnings.warn('colmap not provided.  Duplicate behavior controlled by default Mappings')
+        id_cols = colmap.keys()
+    else:
+        id_cols = kwargs['colmap']
+
+    mapped_columns = _search_keys(id_cols, data.columns)
+    unique_frame = data[mapped_columns].drop_duplicates().copy()
+    unique_frame = random_assignment(unique_frame, *args, **kwargs)
+    return pd.merge(data, unique_frame, on=mapped_columns)
+
+
+
+def merge_with_pool(linked: pd.DataFrame, idpool: pd.DataFrame) -> pd.DataFrame:
+    assert 'id' in linked.columns, "First frame does not have id columns."
+    assert 'id_pool' in idpool.columns, "Second frame does not have id_pool column."
+    return pd.merge(linked, idpool, left_on='id', right_on='id_pool')
+
+
+def swap_mapped_and_clean(data: pd.DataFrame) -> pd.DataFrame:
+    idset = _search_keys(colmap.keys(), data.columns)
+
+    # Overwrite identifying data
+    for col in idset:
+        data[col] = data[colmap[col]]
+
+    # Drop pool columns
+    keep = [col for col in data.columns if 'pool' not in col]
+    return data[keep]
+
+

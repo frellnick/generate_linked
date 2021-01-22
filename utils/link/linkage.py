@@ -11,7 +11,7 @@ import numpy as np
 
 
 from assets.mappings import colmap
-from settings import get_config
+from settings import get_config, g
 import warnings
 
 config = get_config()
@@ -44,10 +44,35 @@ class Linkage():
             f.linked = f.apply(assign, id_list=id_list)
         self._assigned = True
 
+    def _make_jobs(self, *args):
+        if len(args) > 1:
+            jobs = list(zip(*args))
+            return jobs
+        return args
+
+    def _multiprocess_merge_with_pool(self):
+        jobs = self._make_jobs(
+            [f.linked for f in self.files], 
+            [self.idpool.compute() for _ in range(len(self.files))]
+            )
+        uf = list(g.mpool.map(merge_with_pool, jobs))
+        for i, f in enumerate(self.files):
+            f.linked = uf[i]
+
+    def _multiprocess_swap_mapped_and_clean(self):
+        jobs = [f.linked for f in self.files]
+        uf = list(g.mpool.map(swap_mapped_and_clean, jobs))
+        for i, f in enumerate(self.files):
+            f.linked = uf[i]
+
     def _replace_linked_values(self):
-        for f in self.files:
-            f.linked = merge_with_pool(f.linked, self.idpool.compute())
-            f.linked = swap_mapped_and_clean(f.linked)
+        if config.MULTIPROCESSING:
+            self._multiprocess_merge_with_pool()
+            self._multiprocess_swap_mapped_and_clean()
+        else:
+            for f in self.files:
+                f.linked = merge_with_pool(f.linked, self.idpool.compute())
+                f.linked = swap_mapped_and_clean(f.linked)
 
     def process(self):
         self._assign_linkage()
@@ -96,7 +121,9 @@ def random_with_repeats_assignment(data: pd.DataFrame, *args, **kwargs):
 
 
 
-def merge_with_pool(linked: pd.DataFrame, idpool: pd.DataFrame) -> pd.DataFrame:
+def merge_with_pool(*args) -> pd.DataFrame:
+    linked = args[0][0]
+    idpool = args[0][1]
     assert 'id' in linked.columns, "First frame does not have id columns."
     assert 'id_pool' in idpool.columns, "Second frame does not have id_pool column."
     return pd.merge(linked, idpool, left_on='id', right_on='id_pool')

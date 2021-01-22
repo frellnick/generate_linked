@@ -37,4 +37,4 @@ if __name__ == "__main__":
     linkage = time_step(link_sources, 'link_sources')
 
     # Export linkage with default paramaters
-    time_step(export_linkage(linkage=linkage), 'export_linkage')
+    time_step(export_linkage, 'export_linkage', linkage)

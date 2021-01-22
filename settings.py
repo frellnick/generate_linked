@@ -35,13 +35,13 @@ class Config():
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 500000
+        self.ID_POOL_SIZE = 5000
 
         # Set proportion of identities in identity pool to be used in linkage
         self.ID_POOL_MAX_UTILIZATION = 0.95
 
         # Dataset Size
-        self.DATASET_SIZE = 50000
+        self.DATASET_SIZE = 100
 
         # Link Assignment ('random assignment' (1:1) or 'random_with_repeats')
         self.ASSIGNMENT_TYPE = 'random_assignment'

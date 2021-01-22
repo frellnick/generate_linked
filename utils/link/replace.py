@@ -17,7 +17,12 @@ config = get_config()
 
 
 def load_id_pool() -> Dataset:
-    num_ids = int(config.ID_POOL_MAX_UTILIZATION * config.ID_POOL_SIZE)
+    num_ids = max(
+        [
+            int(config.ID_POOL_MAX_UTILIZATION * config.ID_POOL_SIZE),
+            config.DATASET_SIZE,
+        ]
+    )
     idpool = Dataset(
         source=config.ID_FILE_SAVE_PATH,
         transforms=[
@@ -36,7 +41,7 @@ def _list_files(s=None):
 
 def load_source_samples():
     t = [
-        sample_frame,
+        stage_partial(sample_frame, replace=True),
     ]
     files = [Dataset(s, t) for s in _list_files()]
     return files

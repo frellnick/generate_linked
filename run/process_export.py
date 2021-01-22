@@ -33,6 +33,8 @@ def _generate_path(source_path, base_dir=None):
 def _generate_config_report(config, *args, **kwargs):
     pass
 
+def _generate_linkage_report(config, *args, **kwargs):
+    pass
 
 def export_linkage(linkage:Linkage, *args, **kwargs):
     # report = generate_report(linkage, *args, **kwargs)  ## TODO: Not implemented yet

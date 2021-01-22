@@ -28,20 +28,20 @@ class Config():
         self.UNIQUE_FIELD_OPTIONS = [
             'ssn', 
             'ssid', 
-            'birth_date',
+            # 'birth_date',
             'student_id',
             # 'first_name', 
             # 'last_name',
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 30000
+        self.ID_POOL_SIZE = 500000
 
         # Set proportion of identities in identity pool to be used in linkage
         self.ID_POOL_MAX_UTILIZATION = 0.95
 
         # Dataset Size
-        self.DATASET_SIZE = 20000
+        self.DATASET_SIZE = 50000
 
         # Link Assignment ('random assignment' (1:1) or 'random_with_repeats')
         self.ASSIGNMENT_TYPE = 'random_assignment'

@@ -43,6 +43,7 @@ def draw_unique(data, fieldname=None):
 
     
     field = data[fieldname]
+    print("Drawing unique: ", fieldname)
     if not _test_unique(field):
         generator = gen_registry[fieldname]
         _redraw_duplicates(data, fieldname, generator)

@@ -14,8 +14,7 @@ Anaconda, Miniconda
 ```bash
 conda create -n synthgen python=3.8
 conda activate synthgen
-conda install pytest
-conda install faker
+conda install pytest pandas numpy faker
 # conda install modin[dask] ## Requires network firwall rules for DASK scheduler
 # conda env create -f environment.yml
 # conda activate synthgen
@@ -25,17 +24,10 @@ conda install faker
 ## Usage
 Configure application in settings.py
 
-**Specify** the following:
-1. self.SOURCE_DIR - Example:  _mpath('data/source_samples')
-
-2. self.ID_FILE_PATH - Example:  _mpath('data/idpool/id_pool.csv')
-
-3. self.ID_FILE_SAVE_PATH - Example: _mpath('data/idpool/id_pool_modified.csv')
-    
-4. self.LINKED_DIR - Example:  _mpath('data/linked_tables')
-        
-5. self.REPORT_DIR - Example:  _mpath('data/reports')
-
+Run with 
+```bash
+python main.py
+```
 
 ## Tests
 Tests written with pytest.  

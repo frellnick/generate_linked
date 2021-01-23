@@ -41,7 +41,9 @@ def _transform_save_pool(pool:pd.DataFrame, save=False, save_path=None)->pd.Data
 
 
 def _expand_pool(pool:pd.DataFrame, pool_size:int)->pd.DataFrame:
-    return expand_frame(frame=pool, frame_size=pool_size)
+    epool = expand_frame(frame=pool, frame_size=pool_size)
+    epool['id'] = np.arange(pool_size)
+    return epool
 
 
 def create_id_pool(config=config) -> pd.DataFrame:

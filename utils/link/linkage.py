@@ -44,17 +44,11 @@ class Linkage():
             f.linked = f.apply(assign, id_list=id_list)
         self._assigned = True
 
-    def _make_jobs(self, *args):
-        if len(args) > 1:
-            jobs = list(zip(*args))
-            return jobs
-        return args
-
     def _multiprocess_merge_with_pool(self):
-        jobs = self._make_jobs(
+        jobs = list(zip(
             [f.linked for f in self.files], 
             [self.idpool.compute() for _ in range(len(self.files))]
-            )
+        ))
         uf = list(g.mpool.map(merge_with_pool, jobs))
         for i, f in enumerate(self.files):
             f.linked = uf[i]
@@ -94,6 +88,7 @@ def random_assignment(data: pd.DataFrame, *args, **kwargs):
         id_assignments = np.random.choice(
             np.arange(kwargs['max_id']), size=len(data), replace=False)
     elif 'id_list' in kwargs:
+        print(f"Assigning ids from frame of length: {len(kwargs['id_list'])}  to Data of length: {len(data)}")
         id_assignments = np.random.choice(
             kwargs['id_list'], size=len(data), replace=False)
     else:
@@ -122,8 +117,10 @@ def random_with_repeats_assignment(data: pd.DataFrame, *args, **kwargs):
 
 
 def merge_with_pool(*args) -> pd.DataFrame:
-    linked = args[0][0]
-    idpool = args[0][1]
+    if len(args) == 1:
+        args = args[0]
+    linked = args[0]
+    idpool = args[1]
     assert 'id' in linked.columns, "First frame does not have id columns."
     assert 'id_pool' in idpool.columns, "Second frame does not have id_pool column."
     return pd.merge(linked, idpool, left_on='id', right_on='id_pool')

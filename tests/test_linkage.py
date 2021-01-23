@@ -44,7 +44,7 @@ def test_merge_with_pool(source):
     idpool = load_id_pool().compute()
     id_list = idpool['id_pool'].unique()
     linked = random_assignment(df, id_list=id_list)
-    linked = merge_with_pool(linked=linked, idpool=idpool)
+    linked = merge_with_pool(linked, idpool)
 
 
 def test_swap_mapped_and_clean(source):
@@ -52,7 +52,7 @@ def test_swap_mapped_and_clean(source):
     idpool = load_id_pool().compute()
     id_list = idpool['id_pool'].unique()
     linked = random_assignment(df, id_list=id_list)
-    linked = merge_with_pool(linked=linked, idpool=idpool)
+    linked = merge_with_pool(linked, idpool)
     ssn_pool = linked['ssn_pool']
     linked = swap_mapped_and_clean(linked)
     assert linked['SSN'][0] == ssn_pool[0]

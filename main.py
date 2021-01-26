@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
     start = time.time()
 
-    # config.MULTIPROCESSING = True
     g.mpool = mp.Pool(config.NUM_WORKERS)
     
     # Create an ID Pool - Will save modified to disk

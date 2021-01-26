@@ -13,7 +13,9 @@ config = get_config()
 
 
 def link_sources(*args, **kwargs):
+    print('Constructing linkage.')
     linkage = create_linkage()
+    print('Processing linkage.')
     linkage.process()
     return linkage
     
@@ -48,6 +50,9 @@ def export_linkage(linkage:Linkage, *args, **kwargs):
     # Copy ID Pool computed for linkage
     save_path = _generate_path(linkage.idpool.source)
     linkage.idpool.compute().to_csv(save_path, index=False)
+
+    # Save Configuration for reference
+    config.export(_generate_path('CONFIG.json'))
     
 
 

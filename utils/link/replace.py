@@ -52,5 +52,4 @@ def create_linkage():
         files=load_source_samples(),
         idpool=load_id_pool()
     )
-    l.process()
     return l

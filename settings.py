@@ -37,19 +37,19 @@ class Config():
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 2000000
+        self.ID_POOL_SIZE = 20000
 
         # Set proportion of identities in identity pool to be used in linkage
         self.ID_POOL_MAX_UTILIZATION = 0.95
 
         # Dataset Size
-        self.DATASET_SIZE = 1000000
+        self.DATASET_SIZE = 10000
 
         # Link Assignment ('random_assignment' (1:1) or 'random_with_repeats')
         self.ASSIGNMENT_TYPE = 'random_assignment'
 
         # Control native multiprocessing. Must be False if not ran from __main__ 
-        self.MULTIPROCESSING = False
+        self.MULTIPROCESSING = True
 
         self.NUM_WORKERS = 4
 
@@ -88,5 +88,4 @@ def _mpath(path):
 def get_config(debug=True) -> Config:
     if not hasattr(g, 'config'):
         g.config = Config(debug=debug)
-        
     return g.config

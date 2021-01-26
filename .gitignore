@@ -4,3 +4,9 @@
 *.json
 
 *__pycache__
+
+*.pytest_cache
+
+# Development/Review in Jupyter
+*.ipynb
+.ipynb_checpoints*

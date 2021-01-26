@@ -43,11 +43,11 @@ def export_linkage(linkage:Linkage, *args, **kwargs):
     # Save the linked files
     for f in linkage.files:
         save_path = _generate_path(f.source)
-        f.linked.to_csv(save_path)
+        f.linked.to_csv(save_path, index=False)
 
     # Copy ID Pool computed for linkage
     save_path = _generate_path(linkage.idpool.source)
-    linkage.idpool.compute().to_csv(save_path)
+    linkage.idpool.compute().to_csv(save_path, index=False)
     
 
 

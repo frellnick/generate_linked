@@ -1,7 +1,9 @@
 # settings.py
 
 from assets.mappings import colmap
+import inspect
 import os
+import json
 from utils import g
 
 
@@ -52,11 +54,36 @@ class Config():
         self.NUM_WORKERS = 4
 
 
+    def _collect_attrs(self) -> list:
+        attributes = inspect.getmembers(self, lambda a:not(inspect.isroutine(a)))
+        return _to_dict([a for a in attributes if not(a[0].startswith('__') and a[0].endswith('__'))])
+
+    def export(self, path=None):
+        def _format(raw):
+            return raw
+        if path is None:
+            return json.dumps(_format(self._collect_attrs()))
+        
+        with open(path, 'w+') as file:
+            json.dump(_format(self._collect_attrs()), file, sort_keys=True, indent=4)
+
+
+
+## Utility Functions
+
+
+def _to_dict(keyvals:list) -> dict:
+    d = {}
+    for kv in keyvals:
+        d[kv[0]] = kv[1]
+    return d
 
 def _mpath(path):
     cp = path.split('/')
     return os.path.join(os.getcwd(), *cp)
 
+
+## Factory function 
 
 def get_config(debug=True) -> Config:
     if not hasattr(g, 'config'):

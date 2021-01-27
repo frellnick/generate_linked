@@ -129,12 +129,19 @@ def merge_with_pool(*args) -> pd.DataFrame:
 def swap_mapped_and_clean(data: pd.DataFrame) -> pd.DataFrame:
     idset = _search_keys(colmap.keys(), data.columns)
 
-    # Overwrite identifying data
+    # Change column names
+    schema = {}
     for col in idset:
-        data[col] = data[colmap[col]]
+        schema[colmap[col]] = col
+
+    d = data.drop(idset, axis=1)
+    d.rename(schema, axis=1, inplace=True)
+
+    # # Overwrite identifying data - DEPRECATED
+    # for col in idset:
+    #     data[col] = data[colmap[col]]
 
     # Drop pool columns
-    keep = [col for col in data.columns if 'pool' not in col]
-    return data[keep]
-
+    keep = [c for c in d.columns if 'pool' not in c]
+    return d[keep]
 

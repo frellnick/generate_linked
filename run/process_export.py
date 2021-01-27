@@ -5,6 +5,7 @@ from utils.link import create_linkage
 from utils.link.linkage import Linkage
 import os
 import ntpath
+import pandas as pd
 
 from settings import get_config
 
@@ -38,6 +39,13 @@ def _generate_config_report(config, *args, **kwargs):
 def _generate_linkage_report(config, *args, **kwargs):
     pass
 
+def _drop_pool_from_col_name(df: pd.DataFrame)->pd.DataFrame:
+    schema = {}
+    for c in df.columns:
+        schema[c] = c.strip('_pool')
+    return df.rename(schema, axis=1)
+
+
 def export_linkage(linkage:Linkage, *args, **kwargs):
     # report = generate_report(linkage, *args, **kwargs)  ## TODO: Not implemented yet
     # report.save(*args, **kwargs)
@@ -49,7 +57,8 @@ def export_linkage(linkage:Linkage, *args, **kwargs):
 
     # Copy ID Pool computed for linkage
     save_path = _generate_path(linkage.idpool.source)
-    linkage.idpool.compute().to_csv(save_path, index=False)
+    idp = _drop_pool_from_col_name(linkage.idpool.compute())
+    idp.to_csv(save_path, index=False)
 
     # Save Configuration for reference
     config.export(_generate_path('CONFIG.json'))

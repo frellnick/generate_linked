@@ -30,7 +30,7 @@ if __name__ == "__main__":
     g.mpool = mp.Pool(config.NUM_WORKERS)
     
     # Create an ID Pool - Will save modified to disk
-    idpool = time_step(create_id_pool, 'create_id_pool')
+    idpool = time_step(create_id_pool, 'create_id_pool', config)
 
     # Create default linkage
     linkage = time_step(link_sources, 'link_sources')

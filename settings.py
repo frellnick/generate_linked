@@ -20,7 +20,9 @@ class Config():
         self.ID_FILE_PATH = _mpath('data/idpool/id_pool.csv')
 
         self.ID_FILE_SAVE_PATH = _mpath('data/idpool/id_pool_modified.csv')
-    
+
+        self.NAMES_FILE = _mpath('data/idpool/names.json')
+
         self.LINKED_DIR = _mpath('data/linked_tables')
         
         self.REPORT_DIR = _mpath('data/reports')
@@ -32,18 +34,18 @@ class Config():
             'ssid', 
             # 'birth_date',
             'student_id',
-            'first_name', 
+            # 'first_name', 
             'last_name',
         ]
 
         # Set total size of identity pool to be created or sampled
-        self.ID_POOL_SIZE = 20000
+        self.ID_POOL_SIZE = 200000
 
         # Set proportion of identities in identity pool to be used in linkage
         self.ID_POOL_MAX_UTILIZATION = 0.95
 
         # Dataset Size
-        self.DATASET_SIZE = 10000
+        self.DATASET_SIZE = 50000
 
         # Link Assignment ('random_assignment' (1:1) or 'random_with_repeats')
         self.ASSIGNMENT_TYPE = 'random_assignment'

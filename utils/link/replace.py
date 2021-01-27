@@ -7,16 +7,16 @@ Instantiate datsets, idpool, and replace identifying information with idpool.
 from .dataset import Dataset
 
 from utils.transforms import stage_partial, sample_frame, rename_col
-from settings import get_config, g
+from settings import get_config, g, Config
 from assets.mappings import colmap
 from .linkage import Linkage
 
 import os
 
-config = get_config()
 
-
-def load_id_pool() -> Dataset:
+def load_id_pool(config:Config=None) -> Dataset:
+    if config is None:
+        config = get_config()
     num_ids = max(
         [
             int(config.ID_POOL_MAX_UTILIZATION * config.ID_POOL_SIZE),
@@ -33,7 +33,9 @@ def load_id_pool() -> Dataset:
     return idpool
 
 
-def _list_files(s=None):
+def _list_files(s=None, config:Config=None):
+    if config is None:
+        config = get_config()
     if s is None:
         s = config.SOURCE_DIR
     return [os.path.join(s, filename) for filename in os.listdir(s)]

@@ -4,7 +4,7 @@
 import pytest
 import os
 
-from settings import get_config, g
+from settings import get_config, g, Config
 
 from utils.link.replace import (
     load_id_pool, load_source_samples,
@@ -20,14 +20,19 @@ def config():
 
 
 
-def test_load_id_pool(config):
-    pool = load_id_pool()
+def test_load_id_pool(config:Config):
+    config.ID_POOL_SIZE=1000
+    config.DATASET_SIZE=500
+    pool = load_id_pool(config)
+    pool.compute()
     assert type(pool) == Dataset
-    assert len(pool) == 0
+    assert len(pool) > 1
 
 
 def test_id_pool_default_compute(config):
-    pool = load_id_pool()
+    config.ID_POOL_SIZE=1000
+    config.DATASET_SIZE=500
+    pool = load_id_pool(config)
     transformed = pool.compute()
     assert len(transformed) == int(config.ID_POOL_MAX_UTILIZATION * config.ID_POOL_SIZE)
     colnames = transformed.columns

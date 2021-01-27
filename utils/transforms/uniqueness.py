@@ -37,17 +37,21 @@ def draw_unique(data, fieldname=None):
     def _redraw_duplicates(data:pd.DataFrame, fieldname:str, g):
         dup_ind = _get_duplicate_indices(data[fieldname], fieldname)
         newdf = data.iloc[dup_ind].copy()
-        newdf[fieldname] = [g() for _ in range(len(newdf))]
+        newdf[fieldname] = g(len(newdf))
         data.update(newdf)
         print(f'Updated {len(newdf)} records')
+        if len(newdf) == 0:
+            return False
+        return True
 
     
     field = data[fieldname]
     print("Drawing unique: ", fieldname)
     if not _test_unique(field):
         generator = gen_registry[fieldname]
-        _redraw_duplicates(data, fieldname, generator)
-        draw_unique(data, fieldname)
+        succ = _redraw_duplicates(data, fieldname, generator)
+        if succ:
+            draw_unique(data, fieldname)
     
     return data
 

@@ -16,18 +16,22 @@ def testconfig():
 def test_create_small_pool(testconfig):
     testconfig.ID_POOL_SIZE = 10000
     testconfig.SAVE_POOL = False
+    testconfig.MULTIPROCESSING = False
     pool = create_id_pool(config=testconfig)
+    print("pool info: ", len(pool), type(pool))
     assert len(pool) == testconfig.ID_POOL_SIZE
 
 
 def test_create_large_pool(testconfig):
     testconfig.ID_POOL_SIZE = 200000
     testconfig.SAVE_POOL = False
+    testconfig.MULTIPROCESSING = False
     pool = create_id_pool(config=testconfig)
 
 
 def test_create_save_small_pool(testconfig):
     testconfig.ID_POOL_SIZE = 100
+    testconfig.MULTIPROCESSING = False
     pool = create_id_pool(config=testconfig)
     assert len(pool) == testconfig.ID_POOL_SIZE 
     assert os.path.isfile(testconfig.ID_FILE_SAVE_PATH) == True

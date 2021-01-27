@@ -22,7 +22,15 @@ gen_registry['ssid'] = ssid
 
 
 def name(*args, **kwargs):
-    raise NotImplementedError
+    def _combined():
+        return '-'.join(fake.name().split(' '))
+
+    def _single():
+        return fake.name().split(' ')[0]
+    
+    if np.random.randint(1, 10) > 5:
+        return _single()
+    return _combined()
 gen_registry['first_name'] = name 
 gen_registry['last_name'] = name
 gen_registry['middle_name'] = name 
